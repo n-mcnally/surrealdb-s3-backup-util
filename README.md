@@ -37,7 +37,7 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
 
 ### Configuration File
 
-- Create a JSON configuration file (`config.json`) in the same directory (or using `--config` arg) with the following content:
+- Create a JSON configuration file (`config.json`) in the same directory with the following content:
   ```json
   {
     "S3_ACCESS_KEY": "your_s3_access_key",
@@ -46,14 +46,18 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
     "S3_REGION": "your_s3_region",
     "SURREAL_USER": "your_surrealdb_user",
     "SURREAL_PASS": "your_surrealdb_password",
-    "LOCAL_BACKUP_DIR": "/var/lib/surrealdb/backups",
+    "LOCAL_BACKUP_DIR": "/home/example/backups",
     "SURREAL_NS": "your_namespace",
     "SURREAL_DB": "your_database",
     "SURRREAL_HOST": "http://localhost:8000",
+    "S3_FILE_PREFIX": "backups/",
     "BACKUP_RETENTION_DAYS": 7
   }
   ```
 - Replace the placeholder values with your actual values.
+- By default, `config.json` should be placed alongside the script files. A custom configuration path can be provided using the `--config` argument.
+
+> Ensure `S3_FILE_PREFIX` matches the prefix condition of the S3 object expiration policy (default: `"backups/"`).
 
 ### Set Directory and File Permissions
 
@@ -130,6 +134,8 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
   ```bash
   aws s3api put-bucket-lifecycle-configuration --bucket your_bucket_name --lifecycle-configuration file://lifecycle.json
   ```
+
+> Alternatively, configure the expire policy using the AWS dahsboard, visit `Management` > `Lifecycle Rules`.
 
 ## Script Actions
 

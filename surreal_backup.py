@@ -53,7 +53,7 @@ def backup_surrealdb(config, ns, db):
         aws_secret_access_key=config['S3_SECRET_KEY'],
         region_name=config['S3_REGION']
     )
-    s3_key = f"data/surrealdb/backups/{os.path.basename(gzip_backup_file_path)}"
+    s3_key = f"{config['S3_FILE_PREFIX']}{os.path.basename(gzip_backup_file_path)}"
     s3_client.upload_file(gzip_backup_file_path, config['S3_BUCKET'], s3_key)
     print(f"Backup uploaded to S3: {s3_key}")
 
