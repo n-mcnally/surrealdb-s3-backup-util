@@ -3,14 +3,14 @@
 Very simple utility to export data from a SurrealDB database, compresses it, and upload a copy to an AWS S3 bucket. It also handles local backup rotation and relies on AWS S3 lifecycle policies for S3-side rotation.
 
 Installation provides the `surreal_backup` cli utility, crontab rules can be setup to schedule backups.
-    
+
 ## Prerequisites
 
 - Python 3.x
 - AWS S3 bucket
 - AWS credentials configured with appropriate permissions
 - AWS dashboard or CLI access for bucket policy setup.
-    
+
 ## Installation Notes
 
 ### Install Python and Pip
@@ -25,7 +25,7 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
 
 - Install the required Python packages using `pip`:
   ```bash
-  pip3 install boto3 requests
+  sudo pip install minio requests
   ```
 
 ### Setup with setuptools
@@ -62,12 +62,15 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
 ### Set Directory and File Permissions
 
 - Change ownership of the directory and files to your user:
+
   ```bash
   sudo chown -R <youruser>:<youruser> /var/lib/surrealdb/backups
   ```
+
   Replace `<youruser>` with your actual username.
 
 - Set appropriate permissions:
+
   ```bash
   sudo chmod -R 750 /var/lib/surrealdb/backups
   sudo chmod 640 /var/lib/surrealdb/backups/config.json
@@ -81,6 +84,7 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
 ## Usage Notes
 
 - **Run the Script Manually**:
+
   - Ensure the script is executable:
     ```bash
     sudo chmod +x /var/lib/surrealdb/backups/surreal_backup.py
@@ -108,7 +112,6 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
 
 - **Create an S3 Bucket**:
   - Go to the S3 console, create a bucket, and follow the prompts.
-  
 - **Set Up a Lifecycle Policy**:
   - Navigate to your S3 bucket, go to the "Management" tab, and create a lifecycle rule.
   - Add an expiration action to delete objects older than the specified number of days (e.g., 7 days).
@@ -147,3 +150,4 @@ Installation provides the `surreal_backup` cli utility, crontab rules can be set
 - **Rotate Local Backups**: Deletes local backups older than the specified retention period.
 - **S3 Lifecycle Policy**: Manages the deletion of old backups in S3 based on the lifecycle policy.
 - **Command-line Overrides**: Supports overriding the namespace (`NS`) and database (`DB`) using command-line arguments.
+

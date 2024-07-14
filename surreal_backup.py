@@ -3,8 +3,9 @@ import json
 import requests
 import gzip
 from datetime import datetime, timedelta
-import boto3
 import argparse
+from minio import Minio
+from minio.error import S3Error
 
 def load_config(config_path):
     """Load configuration from a JSON file."""
@@ -46,15 +47,18 @@ def backup_surrealdb(config, ns, db):
     os.remove(backup_file_path)
     print(f"Uncompressed backup file deleted: {backup_file_path}")
 
-    # Upload to S3
-    s3_client = boto3.client(
-        's3',
-        aws_access_key_id=config['S3_ACCESS_KEY'],
-        aws_secret_access_key=config['S3_SECRET_KEY'],
-        region_name=config['S3_REGION']
+    # Upload to S3 using minio
+    s3_client = Minio(
+        f"s3.{config['S3_REGION']}.amazonaws.com",
+        access_key=config['S3_ACCESS_KEY'],
+        secret_key=config['S3_SECRET_KEY'],
+        secure=True
     )
     s3_key = f"{config['S3_FILE_PREFIX']}{os.path.basename(gzip_backup_file_path)}"
-    s3_client.upload_file(gzip_backup_file_path, config['S3_BUCKET'], s3_key)
+    
+    # Upload the gzip file
+    s3_client.fput_object(config['S3_BUCKET'], s3_key, gzip_backup_file_path)
+    
     print(f"Backup uploaded to S3: {s3_key}")
 
 def rotate_old_backups(config):
